@@ -3,22 +3,23 @@ var myContainer = document.getElementById("container");
 var myWorld = document.getElementById("world");
 var isJumping = false;
 var velocityY = 0;
-var gravity = 0.6; // Higher numbers make you fall faster
+var gravity = -0.6; // Negative because positive Y is up in this scene
 var floorY = 0;    // Matches your world's resting camera/character Y position
+var onGround = true;
 var sensitivity = 3; // Adjust this value to increase/decrease mouse sensitivity
 
 var lvl_one_map = [
-    { name: "floor", height: 2000, width: 2000, posX: 0, posY: 100, posZ: 0, rotX: 90, rotY: 0, rotZ: 0, color: "violet", opacity: 0.5 , img: "./assets/floor.jpg" , bgsize: "15%"},
-    { name: "ceiling", height: 2000, width: 2000, posX: 0, posY: -100, posZ: 0, rotX: 90, rotY: 0, rotZ: 0, color: "green", opacity: 0.5 , img : "./assets/roof.avif" , bgsize: "15%"},
-    { name: "right wall", height: 200, width: 2000, posX: 1000, posY: 0, posZ: 0, rotX: 0, rotY: 90, rotZ: 0, color: "blue", opacity: 0.5 , img : "./assets/wall.jpg" , bgsize: "15%"},
-    { name: "left wall", height: 200, width: 2000, posX: -1000, posY: 0, posZ: 0, rotX: 0, rotY: 90, rotZ: 0, color: "orange", opacity: 0.5 , img : "./assets/wall.jpg" , bgsize: "15%"},
-    { name: "front wall", height: 200, width: 2000, posX: 0, posY: 0, posZ: 1000, rotX: 0, rotY: 0, rotZ: 0, color: "#ecc0d1", opacity: 0.5 , img : "./assets/wall.jpg" , bgsize: "15%"},
-    { name: "hinter wall", height: 200, width: 2000, posX: 0, posY: 0, posZ: -1000, rotX: 0, rotY: 0, rotZ: 0, color: "yellow", opacity: 0.5 , img : "./assets/wall.jpg" , bgsize: "15%"},
-    { name: "inner_wall_1", height: 200, width: 800, posX: -600, posY: 0, posZ: 400, rotX: 0, rotY: 0, rotZ: 0, color: "black", opacity: 1, img: "./assets/wall.jpg" , bgsize: "15%"},
-    { name: "inner_wall_2", height: 200, width: 600, posX: 0, posY: 0, posZ: 200, rotX: 0, rotY: 90, rotZ: 0, color: "black", opacity: 1, img: "./assets/wall.jpg" , bgsize: "15%"},
-    { name: "inner_wall_3", height: 200, width: 800, posX: 400, posY: 0, posZ: -400, rotX: 0, rotY: 0, rotZ: 0, color: "black", opacity: 1, img: "./assets/wall.jpg" , bgsize: "15%"},
-    { name: "inner_wall_4", height: 200, width: 400, posX: -500, posY: 0, posZ: -200, rotX: 0, rotY: 90, rotZ: 0, color: "black", opacity: 1, img: "./assets/wall.jpg" , bgsize: "15%"},
-    { name: "inner_wall_5", height: 200, width: 600, posX: 300, posY: 0, posZ: 600, rotX: 0, rotY: 90, rotZ: 0, color: "black", opacity: 1, img: "./assets/wall.jpg" , bgsize: "15%"}
+    { name: "floor", height: 2000, width: 2000, posX: 0, posY: 200, posZ: 0, rotX: 90, rotY: 0, rotZ: 0, color: "violet", opacity: 0.5 , img: "./assets/floor.jpg" , bgsize: "15%"},
+    { name: "ceiling", height: 2000, width: 2000, posX: 0, posY: -200, posZ: 0, rotX: 90, rotY: 0, rotZ: 0, color: "green", opacity: 0.5 , img : "./assets/roof.avif" , bgsize: "15%"},
+    { name: "right wall", height: 400, width: 2000, posX: 1000, posY: 0, posZ: 0, rotX: 0, rotY: 90, rotZ: 0, color: "blue", opacity: 0.5 , img : "./assets/wall.jpg" , bgsize: "15%"},
+    { name: "left wall", height: 400, width: 2000, posX: -1000, posY: 0, posZ: 0, rotX: 0, rotY: 90, rotZ: 0, color: "orange", opacity: 0.5 , img : "./assets/wall.jpg" , bgsize: "15%"},
+    { name: "front wall", height: 400, width: 2000, posX: 0, posY: 0, posZ: 1000, rotX: 0, rotY: 0, rotZ: 0, color: "#ecc0d1", opacity: 0.5 , img: "./assets/wall.jpg" , bgsize: "15%"},
+    { name: "hinter wall", height: 400, width: 2000, posX: 0, posY: 0, posZ: -1000, rotX: 0, rotY: 0, rotZ: 0, color: "yellow", opacity: 0.5 , img: "./assets/wall.jpg" , bgsize: "15%"},
+    { name: "inner_wall_1", height: 400, width: 800, posX: -600, posY: 0, posZ: 400, rotX: 0, rotY: 0, rotZ: 0, color: "black", opacity: 1, img: "./assets/wall.jpg" , bgsize: "15%"},
+    { name: "inner_wall_2", height: 400, width: 600, posX: 0, posY: 0, posZ: 200, rotX: 0, rotY: 90, rotZ: 0, color: "black", opacity: 1, img: "./assets/wall.jpg" , bgsize: "15%"},
+    { name: "inner_wall_3", height: 400, width: 800, posX: 400, posY: 0, posZ: -400, rotX: 0, rotY: 0, rotZ: 0, color: "black", opacity: 1, img: "./assets/wall.jpg" , bgsize: "15%"},
+    { name: "inner_wall_4", height: 400, width: 400, posX: -500, posY: 0, posZ: -200, rotX: 0, rotY: 90, rotZ: 0, color: "black", opacity: 1, img: "./assets/wall.jpg" , bgsize: "15%"},
+    { name: "inner_wall_5", height: 400, width: 600, posX: 300, posY: 0, posZ: 600, rotX: 0, rotY: 90, rotZ: 0, color: "black", opacity: 1, img: "./assets/wall.jpg" , bgsize: "15%"}
 ];
 
 
@@ -104,11 +105,22 @@ document.addEventListener("mousemove", (e) => {
 });
 
 window.addEventListener("keydown", function(event) {
-    if (event.code === "Space" && !isJumping) {
-        velocityY = -12; // Controls the jump height (tweak this value)
+    if (event.code === "Space" && !isJumping && Math.abs(pawn.y - floorY) < 1) {
+        velocityY = 12; // Controls the jump height (tweak this value)
         isJumping = true;
+        onGround = false;
     }
 });
+
+function jump() {
+    if (!isJumping && Math.abs(pawn.y - floorY) < 1) {
+        dy = 0;
+        return;
+    }
+
+    velocityY += gravity;
+    dy = velocityY;
+}
 
 myContainer.addEventListener("click", async () => {
   await myContainer.requestPointerLock({
@@ -121,9 +133,6 @@ myContainer.addEventListener("click", async () => {
 });
 
 function update() {
-    // dz = pressUp - pressDown;
-    // dx = pressLeft - pressRight;
-
     dx = (pressLeft - pressRight)*Math.cos(pawn.ry * DEG) + (pressUp - pressDown)*Math.sin(pawn.ry * DEG);
     dz = -(pressLeft - pressRight)*Math.sin(pawn.ry * DEG) + (pressUp - pressDown)*Math.cos(pawn.ry * DEG);
 
@@ -131,12 +140,22 @@ function update() {
     drx = 0;
     mouseX = mouseY = 0;
 
+    jump();
     collision(lvl_one_map, pawn);
 
-    pawn.z += dz;
     pawn.x += dx;
+    pawn.y += dy;
+    pawn.z += dz;
     pawn.ry += dry;
     pawn.rx -= drx;
+
+    if (pawn.y < floorY) {
+        pawn.y = floorY;
+        velocityY = 0;
+        isJumping = false;
+        onGround = true;
+        dy = 0;
+    }
 
     myWorld.style.transform = `translateZ(600px) RotateX(${pawn.rx}deg) RotateY(${pawn.ry}deg) translate3d(${-pawn.x}px, ${pawn.y}px, ${pawn.z}px) `;
 }
